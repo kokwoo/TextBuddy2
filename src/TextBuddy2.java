@@ -40,6 +40,7 @@ public class TextBuddy2 {
 	private static BufferedWriter bufferedWriter;
 	private static FileReader fileReader;
 	private static BufferedReader bufferedReader;
+	private static int lineToDelete;
 	
 	
 	// commands
@@ -54,6 +55,8 @@ public class TextBuddy2 {
 	private static final String MESSAGE_WELCOME_1 = " is ready for use";
 	private static final String MESSAGE_COMMAND = "command: ";
 	private static final String MESSAGE_TEXT_ADDED = "added to ";
+	private static final String MESSAGE_TEXT_DELETE_ERROR = "text does not exits, unable to delete from ";
+	private static final String MESSAGE_TEXT_DELETED = "deleted from ";
 	
 	public static void main(String[] args) throws IOException{
 		initiateProgram(args);
@@ -79,14 +82,51 @@ public class TextBuddy2 {
 				showAddedMsg(content);	
 			}
 			
+			else if(userCommand.equals(COMMAND_DELETE)){
+				stringToInt();
+				if(lineToDelete> sizeOfArray()){
+					printErrorMsg();
+				}
+				else{
+					deleteLineInTxtFile();
+					showDeletedMsg();
+				}
+			}
+			
 			printNewLine();
 			requestCommand();
 			readUserInput();	
 		}
 	}
-	
-	
 
+	private static void showDeletedMsg() {
+		System.out.print(MESSAGE_TEXT_DELETED +fileName+ ": " + '"'+content+'"');
+	}
+
+	private static void deleteLineInTxtFile() throws IOException {
+		createNewWriter();
+		content = arrayOfText.get(lineToDelete-1);
+		arrayOfText.remove(lineToDelete-1);
+		clearTxtFile();
+		rewriteTextFile(sizeOfArray());
+		bufferedWriter.close();
+	}
+	
+	private static void clearTxtFile() throws FileNotFoundException{
+		PrintWriter writer = new PrintWriter(file);
+		writer.print("");
+		writer.close();	
+	}
+	
+	private static void printErrorMsg() {
+		System.out.print(MESSAGE_TEXT_DELETE_ERROR +fileName);
+	}
+	
+	private static void stringToInt() {
+		String strNumber = userInput.substring(7);
+		lineToDelete = Integer.parseInt(strNumber);
+	}
+	
 	private static void printNewLine() {
 		System.out.println();
 	}
@@ -98,10 +138,13 @@ public class TextBuddy2 {
 	private static void addToTxtFile(String content) throws IOException {
 		
 		createNewWriter();
-		int numOfLines = arrayOfText.size();
-		rewriteTextFile(numOfLines);
+		rewriteTextFile(sizeOfArray());
 		bufferedWriter.flush();
 		bufferedWriter.close();
+	}
+
+	private static int sizeOfArray() {
+		return arrayOfText.size();
 	}
 
 
