@@ -30,13 +30,16 @@ public class TextBuddy2 {
 	
 	//variables
 	private static Scanner scanner = new Scanner(System.in);
-	private static ArrayList<String> arrayOfText = new ArrayList<String>();
+	private static ArrayList<String> arrayOfText;
+	private static File file;
 	private static String fileName;
-	private static File file = new File(fileName);
 	private static String userInput;
 	private static String userCommand;
+	private static String content;
 	private static FileWriter fileWriter;
 	private static BufferedWriter bufferedWriter;
+	private static FileReader fileReader;
+	private static BufferedReader bufferedReader;
 	
 	
 	// commands
@@ -48,94 +51,139 @@ public class TextBuddy2 {
 	
 	//messages
 	private static final String MESSAGE_WELCOME = "Welcome to TextBuddy. ";
-	private static final String MESSAGE_WELCOME_1 = "is ready for use";
+	private static final String MESSAGE_WELCOME_1 = " is ready for use";
 	private static final String MESSAGE_COMMAND = "command: ";
-	private static final String MESSAGE_TEXT_ADDED = "add to " +fileName+ ": ";
+	private static final String MESSAGE_TEXT_ADDED = "added to ";
 	
-	static void main(String[] args) throws IOException{
-		fileName = args[0];
-		System.out.println(MESSAGE_WELCOME +fileName+ MESSAGE_WELCOME_1);
+	public static void main(String[] args) throws IOException{
+		initiateProgram(args);
+	
 		
 		if(!file.exists()){
 			createNewTxtFile();
 		}
 		else{
-			fileLinesToArray();
+			fileLinesToArrayList();
 		}
 		
 		requestCommand();
-		userInput = readUserInput();
+		readUserInput();
 		
 		while(!userInput.equals(COMMAND_EXIT)){
-			readUserCommand(userInput);
+			readUserCommand();
 			
 			if(userCommand.equals(COMMAND_ADD)){
-				String content = findContent(userInput);
+				findContent();
 				addToArrayList(content);
 				addToTxtFile(content);
-				showAddedMsg(content);		
+				showAddedMsg(content);	
 			}
 			
+			printNewLine();
+			requestCommand();
+			readUserInput();	
 		}
+	}
+	
+	
+
+	private static void printNewLine() {
+		System.out.println();
 	}
 
 	private static void showAddedMsg(String content) {
-		System.out.print(MESSAGE_TEXT_ADDED + '"' + content + '"');
+		System.out.print(MESSAGE_TEXT_ADDED +fileName+ ": " + '"' + content + '"');
 	}
 
-	private static void addToArrayList(String content) {
-		arrayOfText.add(content);
-	}
-	
-	private static void readUserCommand(String text) {
-		if(text.contains(" ")){
-			userCommand = text.substring(0, text.indexOf(" "));
-		}
-		else{
-			userCommand = text;
-		}
-	}
-	
-	private static String findContent(String userInput) {
-		String content = userInput.substring(4);
-		return content;
-	}
-	
 	private static void addToTxtFile(String content) throws IOException {
 		
-		fileWriter = new FileWriter(file);
-		bufferedWriter = new BufferedWriter(fileWriter);
+		createNewWriter();
 		int numOfLines = arrayOfText.size();
 		rewriteTextFile(numOfLines);
 		bufferedWriter.flush();
 		bufferedWriter.close();
 	}
-	
+
+
+
+	private static void createNewWriter() throws IOException {
+		fileWriter = new FileWriter(file);
+		bufferedWriter = new BufferedWriter(fileWriter);
+	}
+
 	private static void rewriteTextFile(int numOfLines) throws IOException {
 		for(int i=0; i<numOfLines; i++){
 			bufferedWriter.write(arrayOfText.get(i));
 			bufferedWriter.newLine();
 		}
 	}
-	
-	
-	//other methods
-	private static String readUserInput() {
-		return scanner.nextLine();
+
+	private static void addToArrayList(String content) {
+		arrayOfText.add(content);
 	}
 
-	//private static void fileLinesToArray() {
-		//restoreLines(file, arrayOfText);
-	//}
+	private static void findContent() {
+		content = userInput.substring(4);
+	}
+
+	private static void readUserCommand() {
+		if(userInput.contains(" ")){
+			userCommand = userInput.substring(0, userInput.indexOf(" "));
+		}
+		else{
+			userCommand = userInput;
+		}
+	}
+
+	private static void readUserInput() {
+		userInput = scanner.nextLine();
+	}
+
+	private static void requestCommand() {
+		System.out.print(MESSAGE_COMMAND);
+	}
+
+	private static void fileLinesToArrayList() throws IOException {
+		int lineCount = countLinesInFile();
+		createNewReader();
+		//restore the lines from file to array
+		for(int i=0; i<lineCount; i++){
+			arrayOfText.add(bufferedReader.readLine());
+		}
+		bufferedReader.close();	
+	}
+
+	private static int countLinesInFile() throws IOException {		
+		createNewReader();
+		int lineCounter = 0;
+		//counts the number of line in the text file
+		while(bufferedReader.readLine() != null){
+			lineCounter++;	
+		}
+		bufferedReader.close();
+		return lineCounter;
+	
+	}
+
+	private static void createNewReader() throws FileNotFoundException {
+		fileReader = new FileReader(file);
+		bufferedReader = new BufferedReader(fileReader);
+	}
 
 	private static void createNewTxtFile() throws IOException {
 		file.createNewFile();
 	}
-	
-	private static void requestCommand() {
-		System.out.print(MESSAGE_COMMAND);
+
+	private static void initiateProgram(String[] args) {
+		arrayOfText = new ArrayList<String>();
+		fileName = args[0];
+		file = new File(fileName);
+		System.out.println(MESSAGE_WELCOME +fileName+ MESSAGE_WELCOME_1);
 	}
 
 }
 
 
+//for testing
+//for(int i=0; i<arrayOfText.size(); i++){
+//System.out.println(arrayOfText.get(i));
