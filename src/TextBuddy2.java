@@ -124,9 +124,9 @@ public class TextBuddy2 {
 		return scanner.nextLine();
 	}
 
-	private static void fileLinesToArray() {
-		restoreLines(file, arrayOfText);
-	}
+	//private static void fileLinesToArray() {
+		//restoreLines(file, arrayOfText);
+	//}
 
 	private static void createNewTxtFile() throws IOException {
 		file.createNewFile();
