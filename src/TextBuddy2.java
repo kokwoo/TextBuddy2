@@ -176,8 +176,8 @@ public class TextBuddy2 {
 	}
 	
 	private static void stringToInt() {
-		String strNumber = userInput.substring(7);
-		lineToDelete = Integer.parseInt(strNumber);
+		findContent();
+		lineToDelete = Integer.parseInt(content);
 	}
 	
 	private static void printNewLine() {
@@ -189,7 +189,6 @@ public class TextBuddy2 {
 	}
 
 	private static void addToTxtFile(String content) throws IOException {
-		
 		createNewWriter();
 		rewriteTextFile(sizeOfArray());
 		bufferedWriter.flush();
@@ -217,16 +216,11 @@ public class TextBuddy2 {
 	}
 
 	private static void findContent() {
-		content = userInput.substring(4);
+		content = userInput.replace(userCommand, "").trim();
 	}
 
 	private static void readUserCommand() {
-		if(userInput.contains(" ")){
-			userCommand = userInput.substring(0, userInput.indexOf(" "));
-		}
-		else{
-			userCommand = userInput;
-		}
+		userCommand = userInput.trim().split("\\s+")[0];
 	}
 
 	private static void readUserInput() {
