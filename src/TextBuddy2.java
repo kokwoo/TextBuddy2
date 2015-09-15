@@ -41,7 +41,7 @@ public class TextBuddy2 {
 	private static FileReader fileReader;
 	private static BufferedReader bufferedReader;
 	private static int lineToDelete;
-	
+	private static int linesInFile;
 	
 	// commands
 	private static final String COMMAND_CLEAR = "clear";
@@ -57,11 +57,12 @@ public class TextBuddy2 {
 	private static final String MESSAGE_TEXT_ADDED = "added to ";
 	private static final String MESSAGE_TEXT_DELETE_ERROR = "text does not exits, unable to delete from ";
 	private static final String MESSAGE_TEXT_DELETED = "deleted from ";
+	private static final String MESSAGE_TEXTFILE_CLEARED = "all content deleted from ";
+	private static final String MESSAGE_FILE_EMPTY = " is empty";
 	
 	public static void main(String[] args) throws IOException{
 		initiateProgram(args);
 	
-		
 		if(!file.exists()){
 			createNewTxtFile();
 		}
@@ -73,30 +74,82 @@ public class TextBuddy2 {
 		readUserInput();
 		
 		while(!userInput.equals(COMMAND_EXIT)){
-			readUserCommand();
-			
-			if(userCommand.equals(COMMAND_ADD)){
-				findContent();
-				addToArrayList(content);
-				addToTxtFile(content);
-				showAddedMsg(content);	
-			}
-			
-			else if(userCommand.equals(COMMAND_DELETE)){
-				stringToInt();
-				if(lineToDelete> sizeOfArray()){
-					printErrorMsg();
-				}
-				else{
-					deleteLineInTxtFile();
-					showDeletedMsg();
-				}
-			}
-			
+			readUserCommand();	
+			executeCommand();
 			printNewLine();
 			requestCommand();
 			readUserInput();	
 		}
+	}
+
+	private static void executeCommand() throws IOException, FileNotFoundException {
+		if(userCommand.equals(COMMAND_ADD)){
+			findContent();
+			addToArrayList(content);
+			addToTxtFile(content);
+			showAddedMsg(content);	
+		}
+		
+		else if(userCommand.equals(COMMAND_DELETE)){
+			stringToInt();
+			if(lineToDelete> sizeOfArray()){
+				printErrorMsg();
+			}
+			else{
+				deleteLineInTxtFile();
+				showDeletedMsg();
+			}
+		}
+		
+		else if(userCommand.equals(COMMAND_CLEAR)){
+			clearTxtFileAndArrayList();
+			showClearedMsg();
+		}
+		
+		else if(userCommand.equals(COMMAND_DISPLAY)){
+			displayTxtFile();
+		}
+	}
+	
+	private static void displayTxtFile() throws IOException{
+		countLinesInFile();
+		createNewReader();
+		content = bufferedReader.readLine();
+		if(content == null){
+			showFileEmpty();
+		}
+		else{
+			printTextInFile();
+		}		
+		bufferedReader.close();
+	}
+
+	private static void printTextInFile() throws IOException {
+		for(int i=1; i<=linesInFile; i++){
+			printLineTextWithNum(i);
+			if(i!=linesInFile){
+				printNewLine();
+			}
+			content = bufferedReader.readLine();
+		}
+	}
+
+	private static void printLineTextWithNum(int i) {
+		System.out.print(i + ". " + content );
+	}
+
+	private static void showFileEmpty() {
+		System.out.print(fileName + MESSAGE_FILE_EMPTY);
+	}
+	
+	
+	private static void showClearedMsg() {
+		System.out.print( MESSAGE_TEXTFILE_CLEARED+ fileName);
+	}
+	
+	private static void clearTxtFileAndArrayList() throws FileNotFoundException{
+		arrayOfText.clear();
+		clearTxtFile();	
 	}
 
 	private static void showDeletedMsg() {
@@ -147,8 +200,6 @@ public class TextBuddy2 {
 		return arrayOfText.size();
 	}
 
-
-
 	private static void createNewWriter() throws IOException {
 		fileWriter = new FileWriter(file);
 		bufferedWriter = new BufferedWriter(fileWriter);
@@ -187,16 +238,16 @@ public class TextBuddy2 {
 	}
 
 	private static void fileLinesToArrayList() throws IOException {
-		int lineCount = countLinesInFile();
+		countLinesInFile();
 		createNewReader();
 		//restore the lines from file to array
-		for(int i=0; i<lineCount; i++){
+		for(int i=0; i<linesInFile; i++){
 			arrayOfText.add(bufferedReader.readLine());
 		}
 		bufferedReader.close();	
 	}
 
-	private static int countLinesInFile() throws IOException {		
+	private static void countLinesInFile() throws IOException {		
 		createNewReader();
 		int lineCounter = 0;
 		//counts the number of line in the text file
@@ -204,8 +255,7 @@ public class TextBuddy2 {
 			lineCounter++;	
 		}
 		bufferedReader.close();
-		return lineCounter;
-	
+		linesInFile = lineCounter;	
 	}
 
 	private static void createNewReader() throws FileNotFoundException {
@@ -223,10 +273,4 @@ public class TextBuddy2 {
 		file = new File(fileName);
 		System.out.println(MESSAGE_WELCOME +fileName+ MESSAGE_WELCOME_1);
 	}
-
 }
-
-
-//for testing
-//for(int i=0; i<arrayOfText.size(); i++){
-//System.out.println(arrayOfText.get(i));
