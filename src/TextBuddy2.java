@@ -1,4 +1,3 @@
-
 //Name:Wong Kok Woo
 //Matrix No.: A0125303X
 //CE2
@@ -24,7 +23,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+//import java.util.Collections;
 import java.util.Scanner;
+
 
 public class TextBuddy2 {
 	
@@ -43,12 +44,17 @@ public class TextBuddy2 {
 	private static int lineToDelete;
 	private static int linesInFile;
 	
+	//TextBuddy2 as an object
+	private static TextBuddy2 textBuddy2;
+	
 	// commands
 	private static final String COMMAND_CLEAR = "clear";
 	private static final String COMMAND_DELETE = "delete";
 	private static final String COMMAND_DISPLAY = "display";
 	private static final String COMMAND_ADD = "add";
 	private static final String COMMAND_EXIT = "exit";
+	//private static final String COMMAND_SORT = "sort";
+	//private static final String COMMAND_SEARCH = "search";
 	
 	//messages
 	private static final String MESSAGE_WELCOME = "Welcome to TextBuddy. ";
@@ -59,9 +65,10 @@ public class TextBuddy2 {
 	private static final String MESSAGE_TEXT_DELETED = "deleted from ";
 	private static final String MESSAGE_TEXTFILE_CLEARED = "all content deleted from ";
 	private static final String MESSAGE_FILE_EMPTY = " is empty";
+	//private static final String MESSAGE_FILE_SORTED = " is sorted";
 	
 	public static void main(String[] args) throws IOException{
-		initiateProgram(args);
+	/*	initiateProgram(args);
 	
 		if(!file.exists()){
 			createNewTxtFile();
@@ -69,7 +76,8 @@ public class TextBuddy2 {
 		else{
 			fileLinesToArrayList();
 		}
-		
+	*/	
+		textBuddy2 = new TextBuddy2(args);
 		requestCommand();
 		readUserInput();
 		
@@ -82,12 +90,22 @@ public class TextBuddy2 {
 		}
 	}
 
+	public TextBuddy2(String[] args) throws IOException {
+		initiateProgram(args);
+		
+		if(!file.exists()){
+			createNewTxtFile();
+		}
+		else{
+			fileLinesToArrayList();
+		}
+	}
+	
 	private static void executeCommand() throws IOException, FileNotFoundException {
 		if(userCommand.equals(COMMAND_ADD)){
-			findContent();
-			addToArrayList(content);
-			addToTxtFile(content);
-			showAddedMsg(content);	
+			
+			textBuddy2.add();
+				
 		}
 		
 		else if(userCommand.equals(COMMAND_DELETE)){
@@ -109,7 +127,18 @@ public class TextBuddy2 {
 		else if(userCommand.equals(COMMAND_DISPLAY)){
 			displayTxtFile();
 		}
+		
+	
 	}
+
+	private void add() throws IOException {
+		findContent();
+		addToArrayList(content);
+		addToTxtFile(content);
+		showAddedMsg(content);
+	}
+	
+	
 	
 	private static void displayTxtFile() throws IOException{
 		countLinesInFile();
@@ -261,10 +290,11 @@ public class TextBuddy2 {
 		file.createNewFile();
 	}
 
-	private static void initiateProgram(String[] args) {
+	private static String initiateProgram(String[] args) {
 		arrayOfText = new ArrayList<String>();
 		fileName = args[0];
 		file = new File(fileName);
 		System.out.println(MESSAGE_WELCOME +fileName+ MESSAGE_WELCOME_1);
+		return fileName;
 	}
 }
