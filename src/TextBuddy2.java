@@ -68,19 +68,14 @@ public class TextBuddy2 {
 	//private static final String MESSAGE_FILE_SORTED = " is sorted";
 	
 	public static void main(String[] args) throws IOException{
-	/*	initiateProgram(args);
-	
-		if(!file.exists()){
-			createNewTxtFile();
-		}
-		else{
-			fileLinesToArrayList();
-		}
-	*/	
-		textBuddy2 = new TextBuddy2(args);
-		requestCommand();
-		readUserInput();
 		
+		//construct a new TextBuddy2 
+		textBuddy2 = new TextBuddy2(args);	
+		textBuddy2.runProgram();
+	}
+	
+	//read command, read content, execute command
+	private void runProgram() throws IOException, FileNotFoundException {
 		while(!userInput.equals(COMMAND_EXIT)){
 			readUserCommand();	
 			executeCommand();
@@ -89,58 +84,66 @@ public class TextBuddy2 {
 			readUserInput();	
 		}
 	}
-
+	
+	//constructor
 	public TextBuddy2(String[] args) throws IOException {
 		initiateProgram(args);
-		
+		//create new file if file does not exist, else write to old file
 		if(!file.exists()){
 			createNewTxtFile();
 		}
 		else{
 			fileLinesToArrayList();
 		}
+		requestCommand();
+		readUserInput();
 	}
 	
 	private static void executeCommand() throws IOException, FileNotFoundException {
-		if(userCommand.equals(COMMAND_ADD)){
-			
-			textBuddy2.add();
-				
+		if(userCommand.equals(COMMAND_ADD)){		
+			textBuddy2.addMethod();
 		}
 		
 		else if(userCommand.equals(COMMAND_DELETE)){
-			stringToInt();
-			if(lineToDelete> sizeOfArray()){
-				printErrorMsg();
-			}
-			else{
-				deleteLineInTxtFile();
-				showDeletedMsg();
-			}
+			textBuddy2.deleteMethod();
 		}
 		
 		else if(userCommand.equals(COMMAND_CLEAR)){
-			clearTxtFileAndArrayList();
-			showClearedMsg();
+			textBuddy2.clearMethod();
 		}
 		
 		else if(userCommand.equals(COMMAND_DISPLAY)){
-			displayTxtFile();
+			textBuddy2.displayTxtFile();
 		}
 		
 	
 	}
+	
+	//Public methods for unit testing
+	public void clearMethod() throws FileNotFoundException {
+		clearTxtFileAndArrayList();
+		showClearedMsg();
+	}
 
-	private void add() throws IOException {
+	public void deleteMethod() throws IOException {
+		stringToInt();
+		if(lineToDelete> sizeOfArray()){
+			printErrorMsg();
+		}
+		else{
+			deleteLineInTxtFile();
+			showDeletedMsg();
+		}
+	}
+
+	public void addMethod() throws IOException {
 		findContent();
 		addToArrayList(content);
 		addToTxtFile(content);
 		showAddedMsg(content);
 	}
 	
-	
-	
-	private static void displayTxtFile() throws IOException{
+	public void displayTxtFile() throws IOException{
 		countLinesInFile();
 		createNewReader();
 		content = bufferedReader.readLine();
@@ -152,7 +155,8 @@ public class TextBuddy2 {
 		}		
 		bufferedReader.close();
 	}
-
+	
+	//Private methods 
 	private static void printTextInFile() throws IOException {
 		for(int i=1; i<=linesInFile; i++){
 			printLineTextWithNum(i);
