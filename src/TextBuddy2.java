@@ -51,7 +51,7 @@ public class TextBuddy2 {
 	private static final String COMMAND_ADD = "add";
 	private static final String COMMAND_EXIT = "exit";
 	private static final String COMMAND_SORT = "sort";
-	// private static final String COMMAND_SEARCH = "search";
+	private static final String COMMAND_SEARCH = "search";
 
 	// messages
 	private static final String MESSAGE_WELCOME = "Welcome to TextBuddy. ";
@@ -149,9 +149,55 @@ public class TextBuddy2 {
 			}
 		}
 		
+		else if(userCommand.equals(COMMAND_SEARCH)){
+			content = findContent();
+			if(arrayOfText.isEmpty()){
+				showFileEmpty();
+			}
+			else{
+				ArrayList<String> wordFoundLines = textBuddy2.searchFile(arrayOfText, file, content);
+				printLinesWithSearchWord(wordFoundLines);
+			}
+		}
+		
 		else {
 			showInvalidCommand();
 		}
+	}
+
+	public ArrayList<String> searchFile(ArrayList<String> arrayOfText, File file, String content) {
+		ArrayList<String> wordFoundLines = new ArrayList<String>();
+		for(int i=0; i<arrayOfText.size();i++){
+			if(containWord(arrayOfText.get(i), content)){
+				wordFoundLines.add(arrayOfText.get(i));
+			}
+		}
+		return wordFoundLines;
+	}
+
+	private static void printLinesWithSearchWord(ArrayList<String> wordFoundLines) {
+		if(wordFoundLines.isEmpty()){
+			System.out.print(fileName + " does not contain "+ content );
+		}
+		else{
+			for(int j=1;j<=wordFoundLines.size();j++){
+				content = wordFoundLines.get(j-1);
+				printLineTextWithNum(j);
+				if(j!=wordFoundLines.size()){
+					printNewLine();
+				}
+			}
+		}
+	}
+	
+	private static boolean containWord(String text, String content){
+		String[] splited = text.split("\\s+");
+		for(int i=0; i<splited.length;i++){
+			if(splited[i].equalsIgnoreCase(content)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void sortFile(ArrayList<String> arrayOfText, File file) throws IOException, FileNotFoundException {
@@ -208,7 +254,6 @@ public class TextBuddy2 {
 		bufferedReader.close();
 	}
 
-	// Private methods
 	private static void printTextInFile() throws IOException {
 		for (int i = 1; i <= linesInFile; i++) {
 			printLineTextWithNum(i);
@@ -258,7 +303,7 @@ public class TextBuddy2 {
 		content = arrayOfText.get(lineToDelete - 1);
 	}
 
-	private static void clearTxtFile(File file) throws FileNotFoundException {
+	public static void clearTxtFile(File file) throws FileNotFoundException {
 		PrintWriter writer = new PrintWriter(file);
 		writer.print("");
 		writer.close();
@@ -307,8 +352,9 @@ public class TextBuddy2 {
 		arrayOfText.add(content);
 	}
 
-	private static void findContent() {
+	private static String findContent() {
 		content = userInput.replace(userCommand, "").trim();
+		return content;
 	}
 
 	private static void readUserCommand() {
