@@ -17,24 +17,55 @@ public class SortTest {
 	public final void test() throws IOException {
 		 	//new file
 			File testFile = new File("test.txt");
+			TextBuddy2.setFileName("test.txt");
 			//new arraylist
 			ArrayList<String> contentArray = new ArrayList<String>();
-			contentArray.add("d");
-			contentArray.add("c");
-			contentArray.add("b");
-			contentArray.add("a");
+			ArrayList<String> checkerArray = new ArrayList<String>();
 			
-			TextBuddy2.addToTxtFile(testFile,contentArray);		
-			//textbuddy call testSort
+			TextBuddy2.addToArrayList("d", contentArray);
+			TextBuddy2.addToArrayList("c", contentArray);
+			TextBuddy2.addToArrayList("b", contentArray);
+			TextBuddy2.addToArrayList("a", contentArray);
+			
+			TextBuddy2.addToTxtFile(testFile,contentArray);
+			
 			TextBuddy2 testSort = new TextBuddy2();
 			testSort.sortFile(contentArray,testFile);
 			
-			Object[] resultArray = new String[contentArray.size()];
-			resultArray = contentArray.toArray();
+			TextBuddy2.fileLinesToArrayList(checkerArray, testFile);
+			
+			Object[] resultArray = new String[checkerArray.size()];
+			resultArray = checkerArray.toArray();
+			
 			String[] expectedArray = {"a", "b", "c", "d"};
+			assertArrayEquals(expectedArray, resultArray);
+			
+			
+		
+	}
+	@Test
+	public final void test1() throws IOException {
+			File testFile = new File("test1.txt");
+ 			TextBuddy2.setFileName("test1.txt");
+    		ArrayList<String> contentArray = new ArrayList<String>();
+			ArrayList<String> checkerArray = new ArrayList<String>();
+			TextBuddy2.addToArrayList("4", contentArray);
+			TextBuddy2.addToArrayList("3", contentArray);
+			TextBuddy2.addToArrayList("2", contentArray);
+			TextBuddy2.addToArrayList("1", contentArray);
+			TextBuddy2.addToTxtFile(testFile,contentArray);		
+			
+			TextBuddy2 testSort = new TextBuddy2();
+			testSort.sortFile(contentArray,testFile);
+			
+			//copy my sorted testFile to my checkerArray 
+			TextBuddy2.fileLinesToArrayList(checkerArray, testFile);
+			Object[] resultArray = new String[checkerArray.size()];
+			resultArray = checkerArray.toArray();
+			String[] expectedArray = {"1", "2", "3", "4"};
+			
 			
 			assertArrayEquals(expectedArray, resultArray);
 		
 	}
-	
 }

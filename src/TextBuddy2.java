@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-//import java.util.Collections;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class TextBuddy2 {
@@ -50,7 +50,7 @@ public class TextBuddy2 {
 	private static final String COMMAND_DISPLAY = "display";
 	private static final String COMMAND_ADD = "add";
 	private static final String COMMAND_EXIT = "exit";
-	//private static final String COMMAND_SORT = "sort";
+	private static final String COMMAND_SORT = "sort";
 	// private static final String COMMAND_SEARCH = "search";
 
 	// messages
@@ -63,8 +63,12 @@ public class TextBuddy2 {
 	private static final String MESSAGE_TEXTFILE_CLEARED = "all content deleted from ";
 	private static final String MESSAGE_FILE_EMPTY = " is empty";
 	private static final String MESSAGE_INVALID_COMMAND = "invalid command";
-	//private static final String MESSAGE_FILE_SORTED = " is sorted";
+	private static final String MESSAGE_FILE_SORTED = " is sorted";
 
+	public static void setFileName(String newFileName){
+		fileName = newFileName;
+	}
+	
 	// default constructor
 	public TextBuddy2() {
 	}
@@ -137,11 +141,33 @@ public class TextBuddy2 {
 			textBuddy2.displayTxtFile(file);
 		}
 		
+		else if (userCommand.equals(COMMAND_SORT)) {
+			if (arrayOfText.isEmpty()) {
+				showFileEmpty();
+			} else {
+				textBuddy2.sortFile(arrayOfText, file);
+			}
+		}
+		
 		else {
 			showInvalidCommand();
 		}
 	}
+	
+	public void sortFile(ArrayList<String> arrayOfText, File file) throws IOException, FileNotFoundException {
+		Collections.sort(arrayOfText);
+		createNewWriter(file);
+		clearTxtFile(file);
+		rewriteTextFile(arrayOfText.size(), arrayOfText);
+		bufferedWriter.flush();
+		bufferedWriter.close();
+		showFileSorted();
+	}
 
+	private static void showFileSorted() {
+		System.out.print(fileName + MESSAGE_FILE_SORTED);
+	}
+	
 	private static void showInvalidCommand() {
 		System.out.print(MESSAGE_INVALID_COMMAND);
 	}
@@ -153,6 +179,7 @@ public class TextBuddy2 {
 	}
 
 	public void deleteMethod(ArrayList<String> arrayOfText, File file) throws IOException {
+		findContent();
 		stringToInt();
 		if (lineToDelete > sizeOfArray(arrayOfText)) {
 			printErrorMsg();
@@ -242,7 +269,6 @@ public class TextBuddy2 {
 	}
 
 	private static void stringToInt() {
-		findContent();
 		lineToDelete = Integer.parseInt(content);
 	}
 
@@ -277,7 +303,7 @@ public class TextBuddy2 {
 		}
 	}
 
-	private static void addToArrayList(String content, ArrayList<String> arrayOfText) {
+	public static void addToArrayList(String content, ArrayList<String> arrayOfText) {
 		arrayOfText.add(content);
 	}
 
@@ -297,7 +323,7 @@ public class TextBuddy2 {
 		System.out.print(MESSAGE_COMMAND);
 	}
 
-	private static void fileLinesToArrayList(ArrayList<String> arrayOfText, File file) throws IOException {
+	public static void fileLinesToArrayList(ArrayList<String> arrayOfText, File file) throws IOException {
 		countLinesInFile(file);
 		createNewReader(file);
 		// restore the lines from file to array
@@ -305,6 +331,7 @@ public class TextBuddy2 {
 			arrayOfText.add(bufferedReader.readLine());
 		}
 		bufferedReader.close();
+		
 	}
 
 	private static void countLinesInFile(File file) throws IOException {
