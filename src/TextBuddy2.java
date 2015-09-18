@@ -75,18 +75,16 @@ public class TextBuddy2 {
 
 	// constructor
 	public TextBuddy2(String fileName, File file, ArrayList<String> arrayOfText) throws IOException {
-		showWelcomeMsg(fileName);
 		// create new file if file does not exist, else write to old file
 		if (!file.exists()) {
 			createNewTxtFile(file);
 		} else {
-			fileLinesToArrayList(arrayOfText, file);
-		}
-		requestCommand();
-		readUserInput();
+			//restore the information form file to arraylist
+			fileContentToArrayList(arrayOfText, file);
+		}		
 	}
 
-	private void showWelcomeMsg(String fileName) {
+	private void printWelcomeMsg(String fileName) {
 		System.out.println(MESSAGE_WELCOME + fileName + MESSAGE_WELCOME_1);
 	}
 	
@@ -112,8 +110,11 @@ public class TextBuddy2 {
 		textBuddy2 = new TextBuddy2(fileName, file, arrayOfText);
 	}
 
-	// read command, read content, execute command
+	// show welcome message, read command, read content, execute command
 	public void runProgram(ArrayList<String> arrayOfText, File file) throws IOException, FileNotFoundException {
+		printWelcomeMsg(fileName);
+		requestCommand();
+		readUserInput();
 		while (!userInput.equals(COMMAND_EXIT)) {
 			readUserCommand();
 			executeCommand(arrayOfText, file);
@@ -143,7 +144,7 @@ public class TextBuddy2 {
 		
 		else if (userCommand.equals(COMMAND_SORT)) {
 			if (arrayOfText.isEmpty()) {
-				showFileEmpty();
+				printFileEmptyMsg();
 			} else {
 				textBuddy2.sortFile(arrayOfText, file);
 			}
@@ -152,16 +153,17 @@ public class TextBuddy2 {
 		else if(userCommand.equals(COMMAND_SEARCH)){
 			content = findContent();
 			if(arrayOfText.isEmpty()){
-				showFileEmpty();
+				printFileEmptyMsg();
 			}
 			else{
+				//wordFoundLines stores a list of lines that contain the word the user is searching
 				ArrayList<String> wordFoundLines = textBuddy2.searchFile(arrayOfText, file, content);
 				printLinesWithSearchWord(wordFoundLines);
 			}
 		}
 		
 		else {
-			showInvalidCommand();
+			printInvalidCommandMsg();
 		}
 	}
 
@@ -177,17 +179,26 @@ public class TextBuddy2 {
 
 	private static void printLinesWithSearchWord(ArrayList<String> wordFoundLines) {
 		if(wordFoundLines.isEmpty()){
-			System.out.print(fileName + " does not contain "+ content );
+			printWordNotFoundMsg();
 		}
 		else{
-			for(int j=1;j<=wordFoundLines.size();j++){
-				content = wordFoundLines.get(j-1);
-				printLineTextWithNum(j);
-				if(j!=wordFoundLines.size()){
-					printNewLine();
-				}
+			printSearchResults(wordFoundLines);
+		}
+	}
+
+	private static void printSearchResults(ArrayList<String> wordFoundLines) {
+		System.out.println("Here are your search results:");
+		for(int j=1;j<=wordFoundLines.size();j++){
+			content = wordFoundLines.get(j-1);
+			printLineTextWithNum(j);
+			if(j!=wordFoundLines.size()){
+				printNewLine();
 			}
 		}
+	}
+
+	private static void printWordNotFoundMsg() {
+		System.out.print(fileName + " does not contain "+ content );
 	}
 	
 	private static boolean containWord(String text, String content){
@@ -207,21 +218,21 @@ public class TextBuddy2 {
 		rewriteTextFile(arrayOfText.size(), arrayOfText);
 		bufferedWriter.flush();
 		bufferedWriter.close();
-		showFileSorted();
+		printFileSortedMsg();
 	}
 
-	private static void showFileSorted() {
+	private static void printFileSortedMsg() {
 		System.out.print(fileName + MESSAGE_FILE_SORTED);
 	}
 	
-	private static void showInvalidCommand() {
+	private static void printInvalidCommandMsg() {
 		System.out.print(MESSAGE_INVALID_COMMAND);
 	}
 
 	// Public non-static methods 
 	public void clearMethod(ArrayList<String> arrayOfText, File file) throws FileNotFoundException {
 		clearTxtFileAndArrayList(arrayOfText, file);
-		showClearedMsg();
+		printClearedMsg();
 	}
 
 	public void deleteMethod(ArrayList<String> arrayOfText, File file) throws IOException {
@@ -231,7 +242,7 @@ public class TextBuddy2 {
 			printErrorMsg();
 		} else {
 			deleteLineInTxtFile(arrayOfText, file);
-			showDeletedMsg();
+			printDeletedMsg();
 		}
 	}
 
@@ -239,7 +250,7 @@ public class TextBuddy2 {
 		findContent();
 		addToArrayList(content, arrayOfText);
 		addToTxtFile(file, arrayOfText);
-		showAddedMsg(content);
+		printAddedMsg(content);
 	}
 
 	public void displayTxtFile(File file) throws IOException {
@@ -247,7 +258,7 @@ public class TextBuddy2 {
 		createNewReader(file);
 		content = bufferedReader.readLine();
 		if (content == null) {
-			showFileEmpty();
+			printFileEmptyMsg();
 		} else {
 			printTextInFile();
 		}
@@ -268,11 +279,11 @@ public class TextBuddy2 {
 		System.out.print(i + ". " + content);
 	}
 
-	private static void showFileEmpty() {
+	private static void printFileEmptyMsg() {
 		System.out.print(fileName + MESSAGE_FILE_EMPTY);
 	}
 
-	private static void showClearedMsg() {
+	private static void printClearedMsg() {
 		System.out.print(MESSAGE_TEXTFILE_CLEARED + fileName);
 	}
 
@@ -282,7 +293,7 @@ public class TextBuddy2 {
 		clearTxtFile(file);
 	}
 
-	private static void showDeletedMsg() {
+	private static void printDeletedMsg() {
 		System.out.print(MESSAGE_TEXT_DELETED + fileName + ": " + '"' + content + '"');
 	}
 
@@ -321,7 +332,7 @@ public class TextBuddy2 {
 		System.out.println();
 	}
 
-	private static void showAddedMsg(String content) {
+	private static void printAddedMsg(String content) {
 		System.out.print(MESSAGE_TEXT_ADDED + fileName + ": " + '"' + content + '"');
 	}
 
@@ -369,7 +380,7 @@ public class TextBuddy2 {
 		System.out.print(MESSAGE_COMMAND);
 	}
 
-	public static void fileLinesToArrayList(ArrayList<String> arrayOfText, File file) throws IOException {
+	public static void fileContentToArrayList(ArrayList<String> arrayOfText, File file) throws IOException {
 		countLinesInFile(file);
 		createNewReader(file);
 		// restore the lines from file to array

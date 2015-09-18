@@ -33,7 +33,7 @@ public class SortTest {
 			TextBuddy2 testSort = new TextBuddy2();
 			testSort.sortFile(contentArray,testFile);
 			
-			TextBuddy2.fileLinesToArrayList(checkerArray, testFile);
+			TextBuddy2.fileContentToArrayList(checkerArray, testFile);
 			
 			Object[] resultArray = new String[checkerArray.size()];
 			resultArray = checkerArray.toArray();
@@ -61,7 +61,7 @@ public class SortTest {
 			testSort.sortFile(contentArray,testFile1);
 			
 			//copy my sorted testFile to my checkerArray 
-			TextBuddy2.fileLinesToArrayList(checkerArray, testFile1);
+			TextBuddy2.fileContentToArrayList(checkerArray, testFile1);
 			Object[] resultArray = new String[checkerArray.size()];
 			resultArray = checkerArray.toArray();
 			String[] expectedArray = {"1", "2", "3", "4"};
