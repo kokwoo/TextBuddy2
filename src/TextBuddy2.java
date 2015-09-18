@@ -129,27 +129,22 @@ public class TextBuddy2 {
 		if (userCommand.equals(COMMAND_ADD)) {
 			textBuddy2.addMethod(file, arrayOfText);
 		}
-
 		else if (userCommand.equals(COMMAND_DELETE)) {
 			textBuddy2.deleteMethod(arrayOfText, file);
 		}
-
 		else if (userCommand.equals(COMMAND_CLEAR)) {
 			textBuddy2.clearMethod(arrayOfText, file);
 		}
-
 		else if (userCommand.equals(COMMAND_DISPLAY)) {
 			textBuddy2.displayTxtFile(file);
-		}
-		
+		}		
 		else if (userCommand.equals(COMMAND_SORT)) {
 			if (arrayOfText.isEmpty()) {
 				printFileEmptyMsg();
 			} else {
 				textBuddy2.sortFile(arrayOfText, file);
 			}
-		}
-		
+		}		
 		else if(userCommand.equals(COMMAND_SEARCH)){
 			content = findContent();
 			if(arrayOfText.isEmpty()){
@@ -160,8 +155,7 @@ public class TextBuddy2 {
 				ArrayList<String> wordFoundLines = textBuddy2.searchFile(arrayOfText, file, content);
 				printLinesWithSearchWord(wordFoundLines);
 			}
-		}
-		
+		}		
 		else {
 			printInvalidCommandMsg();
 		}
@@ -169,7 +163,7 @@ public class TextBuddy2 {
 
 	public ArrayList<String> searchFile(ArrayList<String> arrayOfText, File file, String content) {
 		ArrayList<String> wordFoundLines = new ArrayList<String>();
-		for(int i=0; i<arrayOfText.size();i++){
+		for(int i = 0; i < arrayOfText.size(); i++){
 			if(containWord(arrayOfText.get(i), content)){
 				wordFoundLines.add(arrayOfText.get(i));
 			}
@@ -188,10 +182,10 @@ public class TextBuddy2 {
 
 	private static void printSearchResults(ArrayList<String> wordFoundLines) {
 		System.out.println("Here are your search results:");
-		for(int j=1;j<=wordFoundLines.size();j++){
+		for(int j = 1; j <= wordFoundLines.size(); j++){
 			content = wordFoundLines.get(j-1);
 			printLineTextWithNum(j);
-			if(j!=wordFoundLines.size()){
+			if(j != wordFoundLines.size()){
 				printNewLine();
 			}
 		}
@@ -203,7 +197,7 @@ public class TextBuddy2 {
 	
 	private static boolean containWord(String text, String content){
 		String[] splited = text.split("\\s+");
-		for(int i=0; i<splited.length;i++){
+		for(int i = 0; i < splited.length; i++){
 			if(splited[i].equalsIgnoreCase(content)){
 				return true;
 			}
@@ -387,8 +381,7 @@ public class TextBuddy2 {
 		for (int i = 0; i < linesInFile; i++) {
 			arrayOfText.add(bufferedReader.readLine());
 		}
-		bufferedReader.close();
-		
+		bufferedReader.close();		
 	}
 
 	private static void countLinesInFile(File file) throws IOException {
@@ -410,5 +403,4 @@ public class TextBuddy2 {
 	private static void createNewTxtFile(File file) throws IOException {
 		file.createNewFile();
 	}
-
 }
